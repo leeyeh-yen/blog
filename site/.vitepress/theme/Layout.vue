@@ -335,7 +335,7 @@ watch(() => route.path, () => { menuOpen.value = false; search.value = ''; close
 
     <footer class="site-footer">
       <p>© {{ footerStartYear }}-{{ currentYear }} <a :href="withBase('/')">{{ site.title }}</a><i>|</i><a :href="withBase('/rss.xml')">RSS</a><i>|</i><a :href="theme.footerLinkUrl" target="_blank" rel="noopener noreferrer">{{ theme.footerLinkLabel }}</a></p>
-      <p>Powered by <a href="https://github.com/Musenxi/Mori" target="_blank" rel="noopener noreferrer">Mori</a><i>|</i>{{ theme.footerNote }}</p>
+      <p>Design With <a href="https://www.yanliye.cn/" target="_blank" rel="noopener noreferrer">Leeyeh</a><i>|</i>{{ theme.footerNote }}</p>
       <p v-if="theme.footerQuote">{{ theme.footerQuote }}</p>
     </footer>
   </div>
