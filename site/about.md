@@ -1,15 +1,33 @@
 ---
-title: 关于这里
-description: 一个用来存放文字、照片和偶尔闪现的念头的小地方。
+title: "关于这里"
+description: "一个用来存放文字、照片和偶尔闪现的念头的小地方。"
 nav: true
-navLabel: 关于
+navLabel: "关于"
 navOrder: 30
 ---
 
-我相信写作不是给生活下结论，而是留下观察它的方式。
+Hello, My name is Yan Liye.
+Majored in IC Engineering
 
-这里会出现技术、旅行、阅读和日常生活。文章没有固定更新频率，只有确实值得写下的内容。
+College of Physics and Information Engineering, Fuzhou University.
 
-## 联系
+## Education
+Ye county Senior High School of Henan Province, 2018-2021
 
-你可以通过 GitHub 找到我，也可以订阅本站的 [RSS](/rss.xml)。
+National Huaqiao University, 2021-2025
+
+Fuzhou University, M.E. (IC Engineering), 2025-present
+
+## Hobbies
+When I'm free, I enjoy:
+Runing & Riding bike and others.
+
+Reading & Watching movies & Listening music & Photography.
+
+Interest in everything full of S&T.
+
+I also work on useful/useless side projects from time to time.
+
+## FindMe
+Email: yanliye2003#qq.com
+And Welcome subscribe [RSS](/rss.xml)。
