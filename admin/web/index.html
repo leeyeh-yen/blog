@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="__CSRF_TOKEN__" />
+    <title>未名手记 · 本地管理</title>
+    <link rel="stylesheet" href="/admin.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <header class="sidebar-header">
+          <div class="logo">未</div>
+          <div><strong>未名手记</strong><span>LOCAL STUDIO</span></div>
+        </header>
+        <button id="new-post" class="primary-button">＋ 新建文章</button>
+        <label class="filter-input"><span>⌕</span><input id="filter" type="search" placeholder="搜索文章" /></label>
+        <div class="list-label"><span>内容</span><span id="post-count">0</span></div>
+        <div class="status-tabs" aria-label="文章状态筛选">
+          <button class="active" data-status-filter="all">全部</button>
+          <button data-status-filter="published">已发布</button>
+          <button data-status-filter="draft">草稿</button>
+        </div>
+        <nav id="post-list" class="post-list" aria-label="文章列表"></nav>
+        <footer class="sidebar-footer">
+          <span id="save-state">所有修改保存在本地</span>
+          <div><button id="open-trash" title="回收站">回收站</button><button id="refresh" title="刷新">↻</button></div>
+        </footer>
+      </aside>
+
+      <main class="workspace">
+        <header class="toolbar">
+          <div class="crumb"><span>文章</span><i>/</i><strong id="current-title">新文章</strong></div>
+          <div class="toolbar-actions">
+            <button id="open-settings" class="quiet-button">站点设置</button>
+            <button id="duplicate-post" class="quiet-button" disabled>创建副本</button>
+            <button id="delete-post" class="quiet-button danger" disabled>删除</button>
+            <button id="open-preview" class="quiet-button">预览站点 ↗</button>
+            <button id="publish-all" class="publish-button">提交并发布</button>
+          </div>
+        </header>
+
+        <div id="recovery-bar" class="recovery-bar hidden">
+          <span>发现一份尚未保存的本地内容</span>
+          <div><button id="dismiss-recovery">忽略</button><button id="restore-recovery">恢复内容</button></div>
+        </div>
+
+        <section class="editor-pane">
+          <div class="meta-grid">
+            <label class="title-field"><span>标题</span><input id="title" placeholder="给这篇文章一个名字" /></label>
+            <label><span>日期</span><input id="date" type="date" /></label>
+            <label><span>路径</span><input id="slug" placeholder="hello-world" /></label>
+            <label><span>状态</span><select id="status"><option value="draft">草稿</option><option value="published">已发布</option></select></label>
+            <label class="wide"><span>摘要</span><input id="description" placeholder="用一句话介绍这篇文章" /></label>
+            <label class="wide"><span>标签</span><input id="tags" placeholder="生活, 技术, 随笔" /></label>
+            <label><span>时效提醒</span><select id="staleNotice"><option value="auto">超过设定天数显示</option><option value="always">始终显示</option><option value="never">不显示</option></select></label>
+            <label><span>提醒天数</span><input id="staleAfterDays" type="number" min="1" step="1" value="30" /></label>
+            <label class="wide stale-message-field"><span>自定义提醒</span><input id="staleMessage" placeholder="留空则自动生成；支持 {publishedDays} 和 {updatedDays}" /></label>
+          </div>
+
+          <div class="editor-tabs">
+            <div><button class="active" data-view="write">写作</button><button data-view="preview">预览</button></div>
+            <label class="image-upload">插入图片<input id="image-input" type="file" accept="image/*" /></label>
+          </div>
+          <div class="markdown-tools" aria-label="Markdown 快捷工具">
+            <button type="button" data-markdown="heading" title="二级标题">H2</button>
+            <button type="button" data-markdown="bold" title="粗体">B</button>
+            <button type="button" data-markdown="quote" title="引用">“</button>
+            <button type="button" data-markdown="link" title="链接">链接</button>
+            <span>Ctrl / ⌘ + S 保存</span>
+          </div>
+          <textarea id="content" spellcheck="true" placeholder="从这里开始写作……"></textarea>
+          <article id="markdown-preview" class="markdown-preview hidden"></article>
+          <div class="editor-footer"><span id="word-count">0 字</span><button id="save-post" class="save-button">保存文章</button></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="publish-dialog">
+      <form method="dialog">
+        <p class="dialog-kicker">PUBLISH</p>
+        <h2>提交并发布所有修改？</h2>
+        <p>系统会先检查博客能否正常构建，再提交并推送到 GitHub。</p>
+        <div class="publish-summary"><span>分支 <strong id="git-branch">—</strong></span><span>远程仓库 <strong id="git-remote">—</strong></span></div>
+        <label><span>提交说明</span><input id="commit-message" value="更新博客内容" /></label>
+        <pre id="git-changes">正在读取变更……</pre>
+        <div class="dialog-actions"><button value="cancel" class="quiet-button">取消</button><button id="check-build" type="button" class="quiet-button">检查构建</button><button id="confirm-publish" value="default" class="publish-button">确认发布</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="settings-dialog">
+      <form id="settings-form">
+        <p class="dialog-kicker">SETTINGS</p>
+        <h2>站点设置</h2>
+        <div class="settings-grid">
+          <label><span>博客名称</span><input id="setting-title" required /></label>
+          <label><span>作者</span><input id="setting-author" /></label>
+          <label class="wide"><span>站点简介</span><input id="setting-description" /></label>
+          <label><span>首页每页文章数</span><input id="setting-page-size" type="number" min="1" max="20" /></label>
+          <label><span>Footer 起始年份</span><input id="setting-footer-year" type="number" min="1970" /></label>
+          <label><span>Footer 链接名称</span><input id="setting-footer-link-label" /></label>
+          <label><span>Footer 链接地址</span><input id="setting-footer-link-url" type="url" /></label>
+          <label class="wide"><span>Footer 说明</span><input id="setting-footer-note" /></label>
+          <label class="wide"><span>Footer 引文</span><input id="setting-footer-quote" /></label>
+          <label class="wide"><span>GitHub 仓库</span><input id="setting-github-repo" placeholder="用户名/仓库名" /></label>
+          <label><span>默认分支</span><input id="setting-github-branch" placeholder="master" /></label>
+        </div>
+        <p>保存后博客预览会自动重新加载配置。</p>
+        <div class="dialog-actions"><button id="create-backup" type="button" class="quiet-button">创建本地备份</button><button id="cancel-settings" type="button" class="quiet-button">取消</button><button type="submit" class="publish-button">保存设置</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="trash-dialog">
+      <form method="dialog">
+        <p class="dialog-kicker">TRASH</p>
+        <h2>文章回收站</h2>
+        <p>删除的文章会保存在本机，可以恢复到原来的位置。</p>
+        <div id="trash-list" class="trash-list"></div>
+        <div class="dialog-actions"><button value="cancel" class="quiet-button">关闭</button></div>
+      </form>
+    </dialog>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/admin.js"></script>
+  </body>
+</html>

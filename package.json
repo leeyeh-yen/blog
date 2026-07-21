@@ -1,0 +1,23 @@
+{
+  "name": "mori-minimal-blog",
+  "version": "0.1.0",
+  "license": "GPL-3.0-only",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.15.1",
+  "scripts": {
+    "dev": "vitepress dev site --host 127.0.0.1 --port 4173",
+    "build": "vitepress build site && node scripts/generate-rss.mjs",
+    "preview": "vitepress preview site --host 127.0.0.1 --port 4173",
+    "admin": "node admin/server.mjs"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@vueuse/core": "^13.5.0",
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
+    "sharp": "^0.34.3",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.18"
+  }
+}
