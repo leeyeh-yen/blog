@@ -1,13 +1,13 @@
 {
   "title": "未名手记",
   "description": "关于生活、技术与缓慢思考的个人记录。",
-  "author": "博主",
+  "author": "Windsky",
   "homePageSize": 5,
   "footerStartYear": 2019,
   "footerLinkLabel": "Home Page",
   "footerLinkUrl": "https://www.yanliye.cn",
   "footerNote": "Hosted on GitHub Pages",
-  "footerQuote": "我不過一個影，要別你而沉沒在黑暗裏了。",
-  "githubRepository": "",
+  "footerQuote": "",
+  "githubRepository": "leeyeh-yen/blog",
   "githubBranch": "master"
 }

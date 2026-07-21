@@ -138,7 +138,7 @@ async function gitInfo() {
     readGit(['branch', '--show-current']),
     readGit(['remote', 'get-url', 'origin']),
   ])
-  return { changes, branch: branch || '未命名分支', remote }
+  return { changes, branch: branch || '未命名分支', remote, projectRoot: root }
 }
 
 async function handleApi(request, response, url) {

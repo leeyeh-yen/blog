@@ -22,6 +22,13 @@ function toast(message) {
   toast.timer = setTimeout(() => element.classList.remove('show'), 2600)
 }
 
+function publishStatus(message = '', type = 'info') {
+  const element = $('#publish-status')
+  element.textContent = message
+  element.dataset.type = type
+  element.classList.toggle('hidden', !message)
+}
+
 function slugify(value) {
   return value.trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '')
 }
@@ -356,10 +363,12 @@ $('#open-preview').addEventListener('click', () => window.open('http://127.0.0.1
 $('#publish-all').addEventListener('click', async () => {
   try {
     if (state.dirty) await savePost()
-    const { changes, branch, remote } = await api('/api/git/status')
+    const { changes, branch, remote, projectRoot } = await api('/api/git/status')
     $('#git-changes').textContent = changes.join('\n') || '没有待提交的修改'
     $('#git-branch').textContent = branch
     $('#git-remote').textContent = remote || '尚未配置'
+    $('#git-project-root').textContent = projectRoot
+    publishStatus(remote ? '' : `当前项目目录尚未配置远程仓库，请在 ${projectRoot} 中执行 git remote add origin。`, 'error')
     $('#publish-dialog').showModal()
   } catch (error) { toast(error.message) }
 })
@@ -381,18 +390,20 @@ $('#trash-list').addEventListener('click', (event) => {
 $('#check-build').addEventListener('click', async () => {
   const button = $('#check-build')
   button.disabled = true; button.textContent = '正在检查……'
-  try { const result = await api('/api/build', { method: 'POST' }); toast(result.message) }
-  catch (error) { toast(error.message) }
+  publishStatus('正在检查博客能否正常构建……')
+  try { const result = await api('/api/build', { method: 'POST' }); publishStatus(result.message, 'success') }
+  catch (error) { publishStatus(error.message, 'error') }
   finally { button.disabled = false; button.textContent = '检查构建' }
 })
 $('#confirm-publish').addEventListener('click', async (event) => {
   event.preventDefault()
   const button = event.currentTarget
   button.disabled = true; button.textContent = '正在检查并发布……'
+  publishStatus('正在构建博客并准备 Git 提交，请不要关闭页面……')
   try {
     const result = await api('/api/publish', { method: 'POST', body: JSON.stringify({ message: $('#commit-message').value }) })
     $('#publish-dialog').close(); toast(result.message || '已经推送到 GitHub，网站正在更新')
-  } catch (error) { toast(error.message) }
+  } catch (error) { publishStatus(error.message, 'error') }
   finally { button.disabled = false; button.textContent = '确认发布' }
 })
 window.addEventListener('beforeunload', (event) => { if (state.dirty) event.preventDefault() })

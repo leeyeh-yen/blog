@@ -82,7 +82,8 @@
         <p class="dialog-kicker">PUBLISH</p>
         <h2>提交并发布所有修改？</h2>
         <p>系统会先检查博客能否正常构建，再提交并推送到 GitHub。</p>
-        <div class="publish-summary"><span>分支 <strong id="git-branch">—</strong></span><span>远程仓库 <strong id="git-remote">—</strong></span></div>
+        <div class="publish-summary"><span>分支 <strong id="git-branch">—</strong></span><span>远程仓库 <strong id="git-remote">—</strong></span><span class="wide">项目目录 <strong id="git-project-root">—</strong></span></div>
+        <p id="publish-status" class="publish-status hidden" role="status" aria-live="polite"></p>
         <label><span>提交说明</span><input id="commit-message" value="更新博客内容" /></label>
         <pre id="git-changes">正在读取变更……</pre>
         <div class="dialog-actions"><button value="cancel" class="quiet-button">取消</button><button id="check-build" type="button" class="quiet-button">检查构建</button><button id="confirm-publish" value="default" class="publish-button">确认发布</button></div>
