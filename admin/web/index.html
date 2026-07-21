@@ -14,10 +14,11 @@
           <div class="logo">未</div>
           <div><strong>未名手记</strong><span>LOCAL STUDIO</span></div>
         </header>
+        <div class="content-switch" aria-label="内容类型"><button class="active" data-content-mode="posts">文章</button><button data-content-mode="pages">页面</button></div>
         <button id="new-post" class="primary-button">＋ 新建文章</button>
         <label class="filter-input"><span>⌕</span><input id="filter" type="search" placeholder="搜索文章" /></label>
         <div class="list-label"><span>内容</span><span id="post-count">0</span></div>
-        <div class="status-tabs" aria-label="文章状态筛选">
+        <div id="status-tabs" class="status-tabs" aria-label="文章状态筛选">
           <button class="active" data-status-filter="all">全部</button>
           <button data-status-filter="published">已发布</button>
           <button data-status-filter="draft">草稿</button>
@@ -31,7 +32,7 @@
 
       <main class="workspace">
         <header class="toolbar">
-          <div class="crumb"><span>文章</span><i>/</i><strong id="current-title">新文章</strong></div>
+          <div class="crumb"><span id="content-kind">文章</span><i>/</i><strong id="current-title">新文章</strong></div>
           <div class="toolbar-actions">
             <button id="open-settings" class="quiet-button">站点设置</button>
             <button id="duplicate-post" class="quiet-button" disabled>创建副本</button>
@@ -49,25 +50,34 @@
         <section class="editor-pane">
           <div class="meta-grid">
             <label class="title-field"><span>标题</span><input id="title" placeholder="给这篇文章一个名字" /></label>
-            <label><span>日期</span><input id="date" type="date" /></label>
+            <label class="article-only"><span>日期</span><input id="date" type="date" /></label>
             <label><span>路径</span><input id="slug" placeholder="hello-world" /></label>
-            <label><span>状态</span><select id="status"><option value="draft">草稿</option><option value="published">已发布</option></select></label>
+            <label class="article-only"><span>状态</span><select id="status"><option value="draft">草稿</option><option value="published">已发布</option></select></label>
             <label class="wide"><span>摘要</span><input id="description" placeholder="用一句话介绍这篇文章" /></label>
-            <label class="wide"><span>标签</span><input id="tags" placeholder="生活, 技术, 随笔" /></label>
-            <label><span>时效提醒</span><select id="staleNotice"><option value="auto">超过设定天数显示</option><option value="always">始终显示</option><option value="never">不显示</option></select></label>
-            <label><span>提醒天数</span><input id="staleAfterDays" type="number" min="1" step="1" value="30" /></label>
-            <label class="wide stale-message-field"><span>自定义提醒</span><input id="staleMessage" placeholder="留空则自动生成；支持 {publishedDays} 和 {updatedDays}" /></label>
+            <label class="wide article-only"><span>标签</span><input id="tags" placeholder="生活, 技术, 随笔" /></label>
+            <label class="article-only"><span>时效提醒</span><select id="staleNotice"><option value="auto">超过设定天数显示</option><option value="always">始终显示</option><option value="never">不显示</option></select></label>
+            <label class="article-only"><span>提醒天数</span><input id="staleAfterDays" type="number" min="1" step="1" value="30" /></label>
+            <label class="wide stale-message-field article-only"><span>自定义提醒</span><input id="staleMessage" placeholder="留空则自动生成；支持 {publishedDays} 和 {updatedDays}" /></label>
+            <label class="page-only hidden"><span>导航名称</span><input id="navLabel" placeholder="显示在顶部的短名称" /></label>
+            <label class="page-only hidden"><span>导航顺序</span><input id="navOrder" type="number" min="1" step="1" value="100" /></label>
+            <label class="page-only hidden"><span>顶部导航</span><select id="navVisible"><option value="true">显示</option><option value="false">隐藏</option></select></label>
           </div>
 
           <div class="editor-tabs">
             <div><button class="active" data-view="write">写作</button><button data-view="preview">预览</button></div>
-            <label class="image-upload">插入图片<input id="image-input" type="file" accept="image/*" /></label>
+            <div class="image-controls"><select id="image-mode" aria-label="图片处理方式"><option value="compressed">压缩为 WebP</option><option value="original">保留原图</option></select><label class="image-upload">插入图片<input id="image-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" /></label></div>
           </div>
           <div class="markdown-tools" aria-label="Markdown 快捷工具">
             <button type="button" data-markdown="heading" title="二级标题">H2</button>
             <button type="button" data-markdown="bold" title="粗体">B</button>
+            <button type="button" data-markdown="italic" title="斜体"><i>I</i></button>
+            <button type="button" data-markdown="unordered-list" title="无序列表">•</button>
+            <button type="button" data-markdown="ordered-list" title="有序列表">1.</button>
             <button type="button" data-markdown="quote" title="引用">“</button>
+            <button type="button" data-markdown="inline-code" title="行内代码">&lt;/&gt;</button>
+            <button type="button" data-markdown="code-block" title="代码块">代码</button>
             <button type="button" data-markdown="link" title="链接">链接</button>
+            <button type="button" data-markdown="divider" title="分隔线">—</button>
             <span>Ctrl / ⌘ + S 保存</span>
           </div>
           <textarea id="content" spellcheck="true" placeholder="从这里开始写作……"></textarea>

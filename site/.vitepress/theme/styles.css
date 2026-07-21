@@ -127,7 +127,11 @@ button { color: inherit; }
 .article-content h2 { margin: 2.8em 0 .8em; font-size: 31px; line-height: 1.35; font-weight: 500; }
 .article-content h3 { margin: 2.3em 0 .7em; font-size: 23px; font-weight: 500; }
 .article-content p { margin: 1.35em 0; }
-.article-content a { color: var(--accent); border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+.article-content a { color: #d78b00; border-bottom: 0; font-family: inherit; font-weight: 700; text-decoration: none; transition: opacity .18s ease; }
+.article-content a:hover { opacity: .68; }
+.section-description,.page-description { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+.archive-intro,.tags-intro { margin-bottom: 38px; }
+.archive-intro:empty,.tags-intro:empty { display: none; }
 .article-content img { display: block; max-width: 100%; margin: 2.8em auto; border-radius: 2px; }
 .article-content blockquote { margin: 2.2em 0; padding: 2px 0 2px 24px; border-left: 2px solid var(--accent); color: var(--muted); font-style: italic; }
 .article-content code { padding: .15em .35em; border-radius: 3px; background: var(--paper-deep); font: .84em ui-monospace, monospace; }

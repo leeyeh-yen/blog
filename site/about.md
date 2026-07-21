@@ -1,6 +1,9 @@
 ---
 title: 关于这里
 description: 一个用来存放文字、照片和偶尔闪现的念头的小地方。
+nav: true
+navLabel: 关于
+navOrder: 30
 ---
 
 我相信写作不是给生活下结论，而是留下观察它的方式。

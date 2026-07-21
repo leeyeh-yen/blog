@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Content, useData, useRoute, withBase } from 'vitepress'
 import { data as posts } from './posts.data'
+import { data as navigationPages } from './pages.data'
 
 const { frontmatter, page, site, theme, isDark } = useData()
 const route = useRoute()
@@ -217,9 +218,7 @@ watch(() => route.path, () => { menuOpen.value = false; search.value = ''; close
             </div>
           </form>
         </div>
-        <a :href="withBase('/archive')">归档</a>
-        <a :href="withBase('/tags')">标签</a>
-        <a :href="withBase('/about')">关于</a>
+        <a v-for="navPage in navigationPages" :key="navPage.url" :href="withBase(navPage.url)">{{ navPage.label }}</a>
         <button class="theme-toggle" type="button" :aria-label="themeLabel" :title="themeLabel" @click="toggleTheme">
           <span aria-hidden="true"></span>
         </button>
@@ -232,13 +231,16 @@ watch(() => route.path, () => { menuOpen.value = false; search.value = ''; close
           <div v-if="isArchive" class="section-heading">
             <div>
               <p class="eyebrow">ARCHIVE</p>
-              <h2>所有文章</h2>
+              <h2>{{ frontmatter.title || '所有文章' }}</h2>
+              <p v-if="frontmatter.description" class="section-description">{{ frontmatter.description }}</p>
             </div>
             <label class="search-box">
               <span>检索</span>
               <input v-model="search" type="search" placeholder="标题、摘要或标签" />
             </label>
           </div>
+
+          <Content v-if="isArchive" class="vp-doc article-content archive-intro" />
 
           <div v-if="displayedPosts.length" class="year-groups">
             <section v-for="[year, yearPosts] in groupedPosts" :key="year" class="year-group">
@@ -272,7 +274,9 @@ watch(() => route.path, () => { menuOpen.value = false; search.value = ''; close
       <template v-else-if="isTags">
         <section class="simple-page tags-page">
           <p class="eyebrow">TAGS</p>
-          <h1>从一个词开始。</h1>
+          <h1>{{ frontmatter.title || '从一个词开始。' }}</h1>
+          <p v-if="frontmatter.description" class="page-description">{{ frontmatter.description }}</p>
+          <Content class="vp-doc article-content tags-intro" />
           <div class="tag-cloud">
             <button v-for="([tag, count]) in allTags" :key="tag" @click="search = search === tag ? '' : tag">
               <span>{{ tag }}</span><sup>{{ count }}</sup>

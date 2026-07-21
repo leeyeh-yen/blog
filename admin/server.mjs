@@ -10,6 +10,7 @@ import sharp from 'sharp'
 const exec = promisify(execFile)
 const root = process.cwd()
 const adminDir = path.join(root, 'admin', 'web')
+const siteDir = path.join(root, 'site')
 const postsDir = path.join(root, 'site', 'posts')
 const draftsDir = path.join(root, 'site', 'drafts')
 const imagesDir = path.join(root, 'site', 'public', 'images')
@@ -21,6 +22,7 @@ const port = Number(process.env.ADMIN_PORT || 4174)
 const host = '127.0.0.1'
 const csrfToken = randomBytes(24).toString('hex')
 const maxBodySize = 20 * 1024 * 1024
+const protectedPages = new Set(['archive.md', 'tags.md', 'about.md'])
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -96,6 +98,32 @@ async function listPosts() {
   return [...published, ...drafts].sort((a, b) => b.date.localeCompare(a.date))
 }
 
+function safePageRelative(value) {
+  const relative = normalizeRelative(value)
+  if (relative.includes('/') || !relative.endsWith('.md') || relative === 'index.md') throw new Error('页面路径无效')
+  return relative
+}
+
+async function listPages() {
+  const entries = await readdir(siteDir, { withFileTypes: true })
+  const pages = await Promise.all(entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'index.md')
+    .map(async (entry) => {
+      const content = await readFile(path.join(siteDir, entry.name), 'utf8')
+      const parsed = matter(content)
+      return {
+        path: entry.name,
+        title: parsed.data.title || '无题页面',
+        description: parsed.data.description || '',
+        navLabel: parsed.data.navLabel || parsed.data.title || '页面',
+        navOrder: Number(parsed.data.navOrder) || 100,
+        nav: parsed.data.nav !== false,
+        protected: protectedPages.has(entry.name),
+      }
+    }))
+  return pages.sort((a, b) => a.navOrder - b.navOrder || a.title.localeCompare(b.title, 'zh-CN'))
+}
+
 async function archiveVersion(file, relative) {
   try {
     const content = await readFile(file, 'utf8')
@@ -155,6 +183,44 @@ async function handleApi(request, response, url) {
 
   if (request.method === 'GET' && url.pathname === '/api/posts') {
     return send(response, 200, { posts: await listPosts() })
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/pages') {
+    return send(response, 200, { pages: await listPages() })
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/page') {
+    const relative = safePageRelative(url.searchParams.get('path'))
+    const content = await readFile(resolveInside(siteDir, relative), 'utf8')
+    return send(response, 200, { content, path: relative, protected: protectedPages.has(relative) })
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/page') {
+    const body = await readJsonBody(request)
+    const relative = safePageRelative(body.path)
+    const target = resolveInside(siteDir, relative)
+    if (protectedPages.has(relative) && body.previousPath !== relative) throw new Error('该路径属于内置页面，请换一个路径')
+    if (body.previousPath && body.previousPath !== relative && protectedPages.has(safePageRelative(body.previousPath))) throw new Error('内置页面不能修改路径')
+    if (body.previousPath !== relative) {
+      const occupied = await stat(target).then(() => true).catch((error) => { if (error.code === 'ENOENT') return false; throw error })
+      if (occupied) throw new Error('该页面路径已经存在')
+    }
+    matter.test(String(body.content || ''))
+    await archiveVersion(target, `page__${relative}`)
+    await writeFile(target, String(body.content || ''), 'utf8')
+    if (body.previousPath && body.previousPath !== relative) {
+      const previousRelative = safePageRelative(body.previousPath)
+      await unlink(resolveInside(siteDir, previousRelative)).catch((error) => { if (error.code !== 'ENOENT') throw error })
+    }
+    return send(response, 200, { ok: true, path: relative, protected: protectedPages.has(relative) })
+  }
+
+  if (request.method === 'DELETE' && url.pathname === '/api/page') {
+    const body = await readJsonBody(request)
+    const relative = safePageRelative(body.path)
+    if (protectedPages.has(relative)) throw new Error('归档、标签和关于页面不能删除')
+    await unlink(resolveInside(siteDir, relative))
+    return send(response, 200, { ok: true })
   }
 
   if (request.method === 'GET' && url.pathname === '/api/settings') {
@@ -256,11 +322,19 @@ async function handleApi(request, response, url) {
     const originalName = path.basename(normalizeRelative(body.fileName))
     const stem = originalName.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-|-$/g, '') || `image-${Date.now()}`
     const folder = resolveInside(imagesDir, `${new Date().getFullYear()}/${slug}`)
-    const output = path.join(folder, `${stem}.webp`)
     const buffer = Buffer.from(String(body.data || '').replace(/^data:[^;]+;base64,/, ''), 'base64')
+    const metadata = await sharp(buffer).metadata()
+    if (!metadata.format) throw new Error('无法识别图片格式')
     await mkdir(folder, { recursive: true })
-    await sharp(buffer).rotate().resize({ width: 2200, height: 2200, fit: 'inside', withoutEnlargement: true }).webp({ quality: 82 }).toFile(output)
-    return send(response, 200, { path: `/images/${new Date().getFullYear()}/${slug}/${stem}.webp` })
+    if (body.mode === 'original') {
+      const extensions = { jpeg: '.jpg', png: '.png', webp: '.webp', gif: '.gif', avif: '.avif' }
+      const extension = extensions[metadata.format]
+      if (!extension) throw new Error('保留原图仅支持 JPG、PNG、WebP、GIF 和 AVIF')
+      await writeFile(path.join(folder, `${stem}${extension}`), buffer)
+      return send(response, 200, { path: `/images/${new Date().getFullYear()}/${slug}/${stem}${extension}`, mode: 'original' })
+    }
+    await sharp(buffer).rotate().resize({ width: 2200, height: 2200, fit: 'inside', withoutEnlargement: true }).webp({ quality: 82 }).toFile(path.join(folder, `${stem}.webp`))
+    return send(response, 200, { path: `/images/${new Date().getFullYear()}/${slug}/${stem}.webp`, mode: 'compressed' })
   }
 
   if (request.method === 'GET' && url.pathname === '/api/git/status') {

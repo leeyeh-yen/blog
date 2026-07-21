@@ -19,6 +19,9 @@ button { cursor:pointer; }
 .primary-button,.publish-button,.save-button { border:0; color:var(--paper); background:var(--ink); transition:opacity .2s; }
 .primary-button { width:100%; padding:12px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); color:var(--ink); background:transparent; border-radius:0; text-align:left; font-family:var(--serif); letter-spacing:1px; }
 .primary-button:hover,.publish-button:hover,.save-button:hover { opacity:.7; }
+.content-switch { display:grid; grid-template-columns:1fr 1fr; margin-bottom:14px; border-bottom:1px solid var(--line); }
+.content-switch button { padding:0 0 10px; border:0; border-bottom:1px solid transparent; background:transparent; color:var(--muted); font:400 12px/1 var(--serif); letter-spacing:2px; }
+.content-switch button.active { border-bottom-color:var(--ink); color:var(--ink); font-weight:700; }
 .filter-input { display:flex; align-items:center; gap:8px; margin:20px 0 24px; padding:10px 0; border-bottom:1px solid var(--line); color:var(--muted); }
 .filter-input input { width:100%; border:0; outline:0; background:transparent; font-size:12px; }
 .list-label { display:flex; justify-content:space-between; margin-bottom:10px; color:var(--muted); font-size:9px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; }
@@ -57,13 +60,16 @@ button { cursor:pointer; }
 .meta-grid .title-field { grid-column:1/-1; }
 .title-field input { font:700 42px/1.35 var(--serif); letter-spacing:1px; }
 .meta-grid .wide { grid-column:span 2; }
+.meta-grid label.hidden { display:none; }
 .editor-tabs { display:flex; justify-content:space-between; align-items:end; margin-top:58px; border-bottom:1px solid var(--line); }
 .editor-tabs button,.image-upload { padding:12px 4px; border:0; background:transparent; color:var(--muted); font-size:10px; font-weight:700; letter-spacing:.1em; }
 .editor-tabs button { margin-right:24px; }
 .editor-tabs button.active { color:var(--ink); border-bottom:1px solid var(--ink); }
 .image-upload { cursor:pointer; }
 .image-upload input { display:none; }
-.markdown-tools { min-height:42px; display:flex; align-items:center; gap:22px; border-bottom:1px solid var(--line); color:var(--muted); }
+.image-controls { display:flex; align-items:center; gap:16px; }
+.image-controls select { padding:8px 20px 8px 0; border:0; outline:0; background:transparent; color:var(--muted); font-size:10px; }
+.markdown-tools { min-height:42px; display:flex; align-items:center; gap:18px; overflow-x:auto; border-bottom:1px solid var(--line); color:var(--muted); }
 .markdown-tools button { min-width:20px; padding:0; border:0; background:transparent; color:var(--secondary); font:700 11px/1 var(--sans); }
 .markdown-tools button:hover { color:var(--ink); }
 .markdown-tools span { margin-left:auto; font-size:9px; letter-spacing:.05em; }
@@ -72,6 +78,12 @@ button { cursor:pointer; }
 .markdown-preview h2 { margin-top:2.5em; font:700 25px/1.5 var(--serif); letter-spacing:1px; }
 .markdown-preview blockquote { margin-left:0; padding-left:20px; border-left:2px solid var(--accent); color:var(--muted); }
 .markdown-preview img { max-width:100%; }
+.markdown-preview a { color:#d78b00; font-family:inherit; font-weight:700; text-decoration:none; }
+.markdown-preview ul,.markdown-preview ol { padding-left:1.5em; }
+.markdown-preview code { padding:.12em .35em; background:var(--hover); font-family:ui-monospace,"SFMono-Regular",Consolas,monospace; font-size:.9em; }
+.markdown-preview pre { overflow:auto; padding:18px; background:var(--hover); line-height:1.7; }
+.markdown-preview pre code { padding:0; background:transparent; }
+.markdown-preview hr { margin:2.5em 0; border:0; border-top:1px solid var(--line); }
 .hidden { display:none; }
 .editor-footer { display:flex; align-items:center; justify-content:space-between; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:10px; }
 .save-button { min-width:112px; }
