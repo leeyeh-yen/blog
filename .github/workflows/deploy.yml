@@ -36,8 +36,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build
         env:
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: /
+          SITE_URL: https://blog.yanliye.cn
         run: pnpm build
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
