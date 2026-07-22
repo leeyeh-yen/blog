@@ -25,18 +25,14 @@ async function mountComments() {
   script.setAttribute('branch', props.branch || 'master')
   script.setAttribute('issue-term', 'pathname')
   script.setAttribute('theme', themeName())
+  script.setAttribute('keep-theme', 'false')
   container.value.appendChild(script)
-}
-
-function syncTheme() {
-  const iframe = container.value?.querySelector<HTMLIFrameElement>('.beaudar-frame')
-  iframe?.contentWindow?.postMessage({ type: 'set-theme', theme: themeName() }, 'https://beaudar.lipk.org')
 }
 
 onMounted(mountComments)
 onBeforeUnmount(() => container.value?.replaceChildren())
 watch(() => [props.repo, props.branch], mountComments)
-watch(() => props.dark, syncTheme)
+watch(() => props.dark, mountComments)
 </script>
 
 <template>

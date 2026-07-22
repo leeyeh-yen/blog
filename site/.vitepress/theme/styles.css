@@ -56,6 +56,7 @@ button { color: inherit; }
 .header-search-results p { margin: 0; padding: 10px 12px; color: var(--muted); font-size: 12px; }
 .theme-toggle { width: 20px; height: 20px; margin-left: 16px; padding: 0; display: grid; place-items: center; border: 0; background: transparent; cursor: pointer; transition: opacity .2s; }
 .theme-toggle > span { display: block; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.theme-toggle > em { display: none; font-style: normal; }
 .theme-toggle:hover { opacity: .7; }
 .menu-toggle { display: none; }
 
@@ -171,7 +172,9 @@ button { color: inherit; }
   .search-trigger { width: 100%; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
   .header-search-form { height: 32px; }
   .header-search-results { position: fixed; top: calc(50% + 46px); left: 50%; width: min(320px, calc(100vw - 40px)); transform: translateX(-50%); }
-  .site-nav .theme-toggle { display: none; }
+  .site-nav .theme-toggle { width: auto; height: 32px; margin: 0; display: flex; align-items: center; gap: 12px; font: 400 17px/1 var(--serif); letter-spacing: 2px; }
+  .site-nav .theme-toggle > span { width: 11px; height: 11px; }
+  .site-nav .theme-toggle > em { display: inline; }
   .section-heading { padding: 62px 0 42px; display: block; }
   .search-box { width: 100%; margin-top: 38px; }
   .post-index:not(.home-index) .year-groups { width: calc(100% - 40px); }
