@@ -169,6 +169,15 @@ async function gitInfo() {
   return { changes, branch: branch || '未命名分支', remote, projectRoot: root }
 }
 
+async function commitsAheadOfRemote() {
+  try {
+    const { stdout } = await exec('git', ['rev-list', '--count', '@{upstream}..HEAD'], { cwd: root })
+    return Math.max(0, Number(stdout.trim()) || 0)
+  } catch {
+    return 0
+  }
+}
+
 async function handleApi(request, response, url) {
   const unsafe = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)
   if (unsafe) {
@@ -354,10 +363,11 @@ async function handleApi(request, response, url) {
     await exec('pnpm', ['build'], { cwd: root, shell: process.platform === 'win32', maxBuffer: 10 * 1024 * 1024 })
     await exec('git', ['add', '--all'], { cwd: root })
     const changes = await gitStatus()
-    if (!changes.length) return send(response, 200, { ok: true, pushed: false, message: '没有需要发布的变更' })
-    await exec('git', ['commit', '-m', message], { cwd: root })
+    if (changes.length) await exec('git', ['commit', '-m', message], { cwd: root })
+    const commitsAhead = await commitsAheadOfRemote()
+    if (!commitsAhead) return send(response, 200, { ok: true, pushed: false, message: '没有需要发布的变更' })
     await exec('git', ['push'], { cwd: root })
-    return send(response, 200, { ok: true, pushed: true })
+    return send(response, 200, { ok: true, pushed: true, message: `已向 GitHub 推送 ${commitsAhead} 个提交` })
   }
 
   return send(response, 404, { error: '接口不存在' })
