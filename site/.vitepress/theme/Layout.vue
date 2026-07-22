@@ -224,7 +224,7 @@ watch(() => route.path, () => { menuOpen.value = false; search.value = ''; close
         <a v-for="navPage in navigationPages" :key="navPage.url" :href="withBase(navPage.url)">{{ navPage.label }}</a>
         <button class="theme-toggle" type="button" :aria-label="themeLabel" :title="themeLabel" @click="toggleTheme">
           <span aria-hidden="true"></span>
-          <em>{{ resolvedDark ? '切换至浅色' : '切换至深色' }}</em>
+          <em>{{ resolvedDark ? '浅色' : '深色' }}</em>
         </button>
       </nav>
     </header>
