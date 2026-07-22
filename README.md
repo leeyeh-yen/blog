@@ -71,6 +71,17 @@ pnpm admin
 
 保留原图支持 JPG、PNG、WebP、GIF 和 AVIF。图片保存在 `site/public/images/<年份>/<内容路径>/`，并自动插入当前 Markdown 内容。
 
+### 启用文章评论
+
+文章评论使用 Beaudar，并将评论保存为 GitHub Issue。首次使用需要完成一次授权：
+
+1. 确认用于评论的 GitHub 仓库是公开仓库，并已启用 Issues；
+2. 打开 [Beaudar GitHub App](https://github.com/apps/beaudar) 并安装到博客仓库；
+3. 在“站点设置”中启用 Beaudar，填写评论仓库和分支；
+4. 保存并重新发布博客。
+
+默认使用 `leeyeh-yen/blog` 和 `master`，每篇文章按页面路径匹配一个 Issue。首次有人评论时，Beaudar 会自动创建对应的 Issue。单篇文章如需关闭评论，可在 Markdown frontmatter 中加入 `comments: false`。
+
 ## 三、首次连接 GitHub 仓库
 
 先在 GitHub 创建一个空仓库，不要初始化 README、`.gitignore` 或 License。然后在本项目目录打开 PowerShell。

@@ -54,7 +54,7 @@ button { cursor:pointer; }
 .meta-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:24px 28px; }
 .meta-grid label { display:block; }
 .meta-grid label > span, dialog label > span { display:block; margin-bottom:8px; color:var(--muted); font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
-.meta-grid input,.meta-grid select,dialog input { width:100%; padding:9px 0; border:0; border-bottom:1px solid var(--line); outline:0; background:transparent; }
+.meta-grid input,.meta-grid select,dialog input,dialog select { width:100%; padding:9px 0; border:0; border-bottom:1px solid var(--line); outline:0; background:transparent; }
 .meta-grid input:focus,.meta-grid select:focus { border-color:var(--ink); }
 .meta-grid input:disabled,.meta-grid select:disabled { opacity:.35; cursor:not-allowed; }
 .meta-grid .title-field { grid-column:1/-1; }

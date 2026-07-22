@@ -204,6 +204,9 @@ async function openSettings() {
   $('#setting-footer-quote').value = settings.footerQuote || ''
   $('#setting-github-repo').value = settings.githubRepository || ''
   $('#setting-github-branch').value = settings.githubBranch || 'master'
+  $('#setting-comments-enabled').value = settings.commentsEnabled === false ? 'false' : 'true'
+  $('#setting-beaudar-repo').value = settings.beaudarRepository || settings.githubRepository || ''
+  $('#setting-beaudar-branch').value = settings.beaudarBranch || settings.githubBranch || 'master'
   $('#settings-dialog').showModal()
 }
 
@@ -221,6 +224,9 @@ async function saveSettings(event) {
     footerQuote: $('#setting-footer-quote').value,
     githubRepository: $('#setting-github-repo').value,
     githubBranch: $('#setting-github-branch').value,
+    commentsEnabled: $('#setting-comments-enabled').value === 'true',
+    beaudarRepository: $('#setting-beaudar-repo').value,
+    beaudarBranch: $('#setting-beaudar-branch').value,
   }
   await api('/api/settings', { method: 'POST', body: JSON.stringify(settings) })
   $('#settings-dialog').close()

@@ -250,6 +250,9 @@ async function handleApi(request, response, url) {
       footerQuote: String(body.footerQuote || '').trim(),
       githubRepository: String(body.githubRepository || '').trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, ''),
       githubBranch: String(body.githubBranch || '').trim() || 'master',
+      commentsEnabled: body.commentsEnabled !== false && body.commentsEnabled !== 'false',
+      beaudarRepository: String(body.beaudarRepository || body.githubRepository || '').trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, ''),
+      beaudarBranch: String(body.beaudarBranch || body.githubBranch || '').trim() || 'master',
     }
     await writeFile(settingsFile, `${JSON.stringify(settings, null, 2)}\n`, 'utf8')
     return send(response, 200, { ok: true, settings })

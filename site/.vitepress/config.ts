@@ -41,5 +41,8 @@ export default defineConfig({
     footerQuote: settings.footerQuote,
     githubRepository,
     githubBranch,
+    commentsEnabled: settings.commentsEnabled,
+    beaudarRepository: settings.beaudarRepository,
+    beaudarBranch: settings.beaudarBranch,
   },
 })

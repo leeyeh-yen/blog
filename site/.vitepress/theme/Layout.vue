@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Content, useData, useRoute, withBase } from 'vitepress'
 import { data as posts } from './posts.data'
 import { data as navigationPages } from './pages.data'
+import BeaudarComments from './BeaudarComments.vue'
 
 const { frontmatter, page, site, theme, isDark } = useData()
 const route = useRoute()
@@ -19,6 +20,8 @@ const homePage = ref(1)
 const homePageSize = computed(() => Math.max(1, Number(theme.value.homePageSize) || 5))
 const currentYear = new Date().getFullYear()
 const footerStartYear = computed(() => Number(theme.value.footerStartYear) || currentYear)
+const commentsRepository = computed(() => String(theme.value.beaudarRepository || theme.value.githubRepository || '').trim())
+const commentsEnabled = computed(() => theme.value.commentsEnabled !== false && Boolean(commentsRepository.value))
 
 const isHome = computed(() => route.path === withBase('/'))
 const isArchive = computed(() => route.path === withBase('/archive') || route.path === withBase('/archive.html'))
@@ -312,6 +315,13 @@ watch(() => route.path, () => { menuOpen.value = false; search.value = ''; close
                 <span v-else class="article-edit-disabled" title="部署到 GitHub 后自动启用编辑链接">在 GitHub 编辑此页</span>
                 <time v-if="articleLastUpdated">本页最后更新时间: {{ articleLastUpdated }}</time>
               </footer>
+              <BeaudarComments
+                v-if="commentsEnabled && frontmatter.comments !== false"
+                :key="route.path"
+                :repo="commentsRepository"
+                :branch="String(theme.beaudarBranch || theme.githubBranch || 'master')"
+                :dark="resolvedDark"
+              />
             </div>
             <aside v-if="tocItems.length" class="toc">
               <p>本页目录</p>

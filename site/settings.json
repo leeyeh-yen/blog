@@ -9,5 +9,8 @@
   "footerNote": "Hosted on GitHub Pages",
   "footerQuote": "",
   "githubRepository": "leeyeh-yen/blog",
-  "githubBranch": "master"
+  "githubBranch": "master",
+  "commentsEnabled": true,
+  "beaudarRepository": "leeyeh-yen/blog",
+  "beaudarBranch": "master"
 }

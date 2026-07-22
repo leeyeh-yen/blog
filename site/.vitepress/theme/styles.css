@@ -118,6 +118,10 @@ button { color: inherit; }
 .article-endbar a:hover { opacity: .65; }
 .article-endbar .article-edit-disabled { cursor: default; }
 .article-endbar time { text-align: right; font-variant-numeric: tabular-nums; }
+.article-comments { margin-top: 66px; }
+.article-comments h2 { margin: 8px 0 28px; font: 500 27px/1.35 var(--serif); letter-spacing: .06em; }
+.beaudar-container { min-height: 140px; }
+.beaudar-container .beaudar-frame { width: 100%; color-scheme: light dark; }
 .toc { position: sticky; top: 36px; padding-left: 22px; border-left: 1px solid var(--line); }
 .toc p { margin: 0 0 17px; font-size: 13px; line-height: 1.5; font-weight: 700; letter-spacing: .08em; }
 .toc a { display: block; margin: 12px 0; color: var(--muted); font: 14px/1.65 var(--serif); }
