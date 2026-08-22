@@ -10,7 +10,10 @@ const props = defineProps<{
 const container = ref<HTMLElement | null>(null)
 
 function themeName() {
-  return props.dark ? 'github-dark' : 'github-light'
+  // Beaudar's cross-origin iframe keeps an opaque white canvas in some browsers.
+  // Render its light palette in both modes so dark mode can invert the complete
+  // frame, including that otherwise unreachable canvas.
+  return 'github-light'
 }
 
 async function mountComments() {
