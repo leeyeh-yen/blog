@@ -35,7 +35,6 @@ async function mountComments() {
 onMounted(mountComments)
 onBeforeUnmount(() => container.value?.replaceChildren())
 watch(() => [props.repo, props.branch], mountComments)
-watch(() => props.dark, mountComments)
 </script>
 
 <template>
