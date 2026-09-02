@@ -433,8 +433,9 @@ async function uploadImage(file) {
   reader.onload = async () => {
     try {
       const mode = $('#image-mode').value
+      const articlePath = state.current?.path || formPath()
       toast(mode === 'original' ? '正在保存原图……' : '正在压缩图片……')
-      const result = await api('/api/media', { method: 'POST', body: JSON.stringify({ fileName: file.name, data: reader.result, mode, slug: slugify($('#slug').value || $('#title').value || 'article') }) })
+      const result = await api('/api/media', { method: 'POST', body: JSON.stringify({ fileName: file.name, data: reader.result, mode, articlePath }) })
       const insertion = `\n![图片说明](${result.path})\n`
       const textarea = $('#content')
       textarea.setRangeText(insertion, textarea.selectionStart, textarea.selectionEnd, 'end')

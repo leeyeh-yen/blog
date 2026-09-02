@@ -330,10 +330,14 @@ async function handleApi(request, response, url) {
 
   if (request.method === 'POST' && url.pathname === '/api/media') {
     const body = await readJsonBody(request)
-    const slug = normalizeRelative(body.slug).replaceAll('/', '-')
+    const articlePath = normalizeRelative(body.articlePath || `${new Date().getFullYear()}/${body.slug || 'article'}.md`)
+    const pathParts = articlePath.split('/')
+    const articleName = pathParts.at(-1).replace(/\.md$/i, '')
+    const slug = articleName.replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-|-$/g, '') || 'article'
+    const year = /^\d{4}$/.test(pathParts[0]) ? pathParts[0] : String(new Date().getFullYear())
     const originalName = path.basename(normalizeRelative(body.fileName))
     const stem = originalName.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-|-$/g, '') || `image-${Date.now()}`
-    const folder = resolveInside(imagesDir, `${new Date().getFullYear()}/${slug}`)
+    const folder = resolveInside(imagesDir, `${year}/${slug}`)
     const buffer = Buffer.from(String(body.data || '').replace(/^data:[^;]+;base64,/, ''), 'base64')
     const metadata = await sharp(buffer).metadata()
     if (!metadata.format) throw new Error('无法识别图片格式')
@@ -343,10 +347,10 @@ async function handleApi(request, response, url) {
       const extension = extensions[metadata.format]
       if (!extension) throw new Error('保留原图仅支持 JPG、PNG、WebP、GIF 和 AVIF')
       await writeFile(path.join(folder, `${stem}${extension}`), buffer)
-      return send(response, 200, { path: `/images/${new Date().getFullYear()}/${slug}/${stem}${extension}`, mode: 'original' })
+      return send(response, 200, { path: `/images/${year}/${slug}/${stem}${extension}`, mode: 'original' })
     }
     await sharp(buffer).rotate().resize({ width: 2200, height: 2200, fit: 'inside', withoutEnlargement: true }).webp({ quality: 82 }).toFile(path.join(folder, `${stem}.webp`))
-    return send(response, 200, { path: `/images/${new Date().getFullYear()}/${slug}/${stem}.webp`, mode: 'compressed' })
+    return send(response, 200, { path: `/images/${year}/${slug}/${stem}.webp`, mode: 'compressed' })
   }
 
   if (request.method === 'GET' && url.pathname === '/api/git/status') {
