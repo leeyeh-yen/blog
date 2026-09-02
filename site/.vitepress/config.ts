@@ -29,6 +29,31 @@ export default defineConfig({
   markdown: {
     lineNumbers: true,
     theme: { light: 'github-light', dark: 'github-dark' },
+    config(md) {
+      const renderImage = md.renderer.rules.image ?? ((tokens, index, options, _env, self) => self.renderToken(tokens, index, options))
+      const renderParagraphOpen = md.renderer.rules.paragraph_open ?? ((tokens, index, options, _env, self) => self.renderToken(tokens, index, options))
+      const renderParagraphClose = md.renderer.rules.paragraph_close ?? ((tokens, index, options, _env, self) => self.renderToken(tokens, index, options))
+      const standaloneImage = (tokens, paragraphIndex) => {
+        const inline = tokens[paragraphIndex + 1]?.type === 'inline' ? tokens[paragraphIndex + 1] : tokens[paragraphIndex - 1]
+        return inline?.children?.length === 1 && inline.children[0].type === 'image' ? inline.children[0] : null
+      }
+
+      md.renderer.rules.paragraph_open = (tokens, index, options, env, self) => {
+        const image = standaloneImage(tokens, index)
+        if (!image) return renderParagraphOpen(tokens, index, options, env, self)
+        image.meta = { ...image.meta, standalone: true }
+        return '<figure class="article-figure">'
+      }
+      md.renderer.rules.paragraph_close = (tokens, index, options, env, self) => (
+        standaloneImage(tokens, index) ? '</figure>' : renderParagraphClose(tokens, index, options, env, self)
+      )
+      md.renderer.rules.image = (tokens, index, options, env, self) => {
+        const image = tokens[index]
+        const rendered = renderImage(tokens, index, options, env, self)
+        if (!image.meta?.standalone || !image.content.trim()) return rendered
+        return `${rendered}<figcaption>${md.utils.escapeHtml(image.content.trim())}</figcaption>`
+      }
+    },
   },
   themeConfig: {
     siteTitle: settings.title,

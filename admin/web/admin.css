@@ -78,6 +78,9 @@ button { cursor:pointer; }
 .markdown-preview h2 { margin-top:2.5em; font:700 25px/1.5 var(--serif); letter-spacing:1px; }
 .markdown-preview blockquote { margin-left:0; padding-left:20px; border-left:2px solid var(--accent); color:var(--muted); }
 .markdown-preview img { max-width:100%; }
+.markdown-preview .article-figure { margin:2.5em auto; text-align:center; }
+.markdown-preview .article-figure img { display:block; margin:0 auto; }
+.markdown-preview .article-figure figcaption { margin-top:.9em; color:var(--muted); font:400 13px/1.7 var(--serif); letter-spacing:.04em; }
 .markdown-preview a { color:#d78b00; font-family:inherit; font-weight:700; text-decoration:none; }
 .markdown-preview ul,.markdown-preview ol { padding-left:1.5em; }
 .markdown-preview code { padding:.12em .35em; background:var(--hover); font-family:ui-monospace,"SFMono-Regular",Consolas,monospace; font-size:.9em; }

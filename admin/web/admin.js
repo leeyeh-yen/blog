@@ -49,6 +49,8 @@ function renderInline(source) {
 function renderMarkdown(source) {
   return source.split(/\n{2,}/).map((block) => {
     const lines = block.split('\n')
+    const standaloneImage = block.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
+    if (standaloneImage) return `<figure class="article-figure"><img src="${escapeHtml(standaloneImage[2])}" alt="${escapeHtml(standaloneImage[1])}">${standaloneImage[1].trim() ? `<figcaption>${escapeHtml(standaloneImage[1].trim())}</figcaption>` : ''}</figure>`
     if (/^```/.test(lines[0]) && /^```\s*$/.test(lines.at(-1))) return `<pre><code>${escapeHtml(lines.slice(1, -1).join('\n'))}</code></pre>`
     if (lines.every((line) => /^[-*]\s+/.test(line))) return `<ul>${lines.map((line) => `<li>${renderInline(line.replace(/^[-*]\s+/, ''))}</li>`).join('')}</ul>`
     if (lines.every((line) => /^\d+\.\s+/.test(line))) return `<ol>${lines.map((line) => `<li>${renderInline(line.replace(/^\d+\.\s+/, ''))}</li>`).join('')}</ol>`
